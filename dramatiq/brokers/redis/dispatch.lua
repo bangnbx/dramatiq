@@ -199,6 +199,20 @@ elseif command == "requeue" then
     end
 
 
+-- Push messages (ids) back to queue with higher priority by put them on the 
+-- left side (to be fetched first)
+elseif command == "priority_requeue" then
+    for i=1,#ARGS do
+        local message_id = ARGS[i]
+
+        if redis.call("srem", queue_acks, message_id) > 0 then
+          if redis.call("hexists", queue_messages, message_id) > 0 then
+              redis.call("lpush", queue_full_name, message_id)
+          end
+        end
+    end
+
+
 -- Acknowledges that a message has been processed.
 elseif command == "ack" then
     local message_id = ARGS[1]

@@ -153,3 +153,11 @@ class Middleware:
 
         There is no ``after_worker_thread_boot``.
         """
+
+    def before_priority_requeue(self, broker, message):
+        """Called before a message is priority requeued.
+        """
+
+    def after_priority_requeue(self, broker, message):
+        """Called after a message has been priority requeued.
+        """

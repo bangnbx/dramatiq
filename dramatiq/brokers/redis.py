@@ -316,6 +316,17 @@ class _RedisConsumer(Consumer):
         finally:
             self.queued_message_ids.discard(message.message_id)
 
+    def discard(self, message):
+        self.queued_message_ids.discard(message.message_id)
+
+    def priority_requeue(self, message):
+        try:
+            self.broker.do_priority_requeue(self.queue_name, message.options["redis_message_id"])
+        except redis.ConnectionError as e:
+            raise ConnectionClosed(e) from None
+        finally:
+            self.queued_message_ids.discard(message.message_id)
+
     def nack(self, message):
         try:
             # Same deal as above.

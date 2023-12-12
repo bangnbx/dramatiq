@@ -346,6 +346,12 @@ class _ConsumerThread(Thread):
                     self.consumer.nack(message)
                     self.broker.emit_after("nack", message)
 
+                elif message.should_priority_requeue:
+                    self.broker.emit_before("priority_requeue", message)
+                    self.consumer.priority_requeue(message)
+                    self.consumer.discard(message)
+                    self.broker.emit_after("priority_requeue", message)
+
                 else:
                     self.logger.debug("Acknowledging message %r.", message.message_id)
                     self.broker.emit_before("ack", message)

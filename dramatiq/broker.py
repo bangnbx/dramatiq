@@ -359,6 +359,7 @@ class MessageProxy:
 
     def __init__(self, message):
         self.failed = False
+        self.should_priority_requeue = False
         self._message = message
         self._exception = None
 
@@ -376,6 +377,11 @@ class MessageProxy:
         """Mark this message for rejection.
         """
         self.failed = True
+
+    def priority_requeue(self):
+        """Mark this message for priority equeue.
+        """
+        self.should_priority_requeue = True
 
     def __getattr__(self, name):
         return getattr(self._message, name)
